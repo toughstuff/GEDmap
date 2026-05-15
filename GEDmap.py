@@ -6,22 +6,25 @@ from folium.plugins import HeatMap
 import streamlit.components.v1 as components
 import gdown
 import os
+import duckdb
 
-if not os.path.exists('GEDevent.csv'):
-    gdown.download('https://drive.google.com/uc?id=1q1qUNHFD6ab0P0pE0019HVo-QVjSKsP9', 'GEDevent.csv', quiet=False)
+if not os.path.exists('GEDevent_slim.csv'):
+    gdown.download('https://drive.google.com/uc?id=1q1qUNHFD6ab0P0pE0019HVo-QVjSKsP9', 'GEDevent_slim.csv', quiet=False)
 
-df = pd.read_csv('GEDevent.csv', low_memory=False)
+con = duckdb.connect()
 
 st.title('Global Conflict Explorer')
 
 # Filters
-region_options = ['All'] + sorted(df['region'].dropna().unique().tolist())
+region_options = ['All'] + sorted(con.execute("SELECT DISTINCT region FROM 'GEDevent_slim.csv' ORDER BY region").df()['region'].tolist())
 selected_region = st.selectbox('Select a region', region_options)
 
 if selected_region != 'All':
-    region_df = df[df['region'] == selected_region]
+    country_options = ['All'] + sorted(con.execute(f"SELECT DISTINCT country FROM 'GEDevent_slim.csv' WHERE region = '{selected_region}' ORDER BY country").df()['country'].tolist())
 else:
-    region_df = df
+    country_options = ['All'] + sorted(con.execute("SELECT DISTINCT country FROM 'GEDevent_slim.csv' ORDER BY country").df()['country'].tolist())
+
+country_name = st.selectbox('Select a country', country_options)
 
 country_name = st.selectbox('Select a country', ['All'] + sorted(region_df['country'].unique().tolist()))
 
