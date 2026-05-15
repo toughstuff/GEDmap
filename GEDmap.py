@@ -15,10 +15,11 @@ con = duckdb.connect()
 
 st.title('Global Conflict Explorer')
 
-# Filters
+# Region filter
 region_options = ['All'] + sorted(con.execute("SELECT DISTINCT region FROM 'GEDevent_slim.csv' ORDER BY region").df()['region'].tolist())
 selected_region = st.selectbox('Select a region', region_options)
 
+# Country filter
 if selected_region != 'All':
     country_options = ['All'] + sorted(con.execute(f"SELECT DISTINCT country FROM 'GEDevent_slim.csv' WHERE region = '{selected_region}' ORDER BY country").df()['country'].tolist())
 else:
@@ -26,12 +27,13 @@ else:
 
 country_name = st.selectbox('Select a country', country_options)
 
-country_name = st.selectbox('Select a country', ['All'] + sorted(region_df['country'].unique().tolist()))
-
+# Load filtered data
 if country_name != 'All':
-    filtered = region_df[region_df['country'] == country_name]
+    filtered = con.execute(f"SELECT * FROM 'GEDevent_slim.csv' WHERE country = '{country_name}'").df()
+elif selected_region != 'All':
+    filtered = con.execute(f"SELECT * FROM 'GEDevent_slim.csv' WHERE region = '{selected_region}'").df()
 else:
-    filtered = region_df
+    filtered = con.execute("SELECT * FROM 'GEDevent_slim.csv'").df()
 
 # Actor filter
 all_actors = sorted(set(filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()))
@@ -88,7 +90,6 @@ m = folium.Map(location=[center_lat, center_lon], zoom_start=5)
 if map_mode == 'Heatmap':
     heat_data = [[r['latitude'], r['longitude'], r['best']] for _, r in map_data.iterrows()]
     HeatMap(heat_data, max_val=50, radius=10, blur=8).add_to(m)
-
 else:
     dot_data = map_data.nlargest(100, 'best')
     for _, r in dot_data.iterrows():
