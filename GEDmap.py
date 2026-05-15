@@ -55,23 +55,25 @@ for v in selected_violence:
 selected_codes = [k for k, v in violence_map.items() if v in selected_violence]
 filtered = filtered[filtered['type_of_violence'].isin(selected_codes)]
 
-# Fatalities over time
-st.subheader('Total Fatalities by Year')
-by_year = filtered.groupby('year')['best'].sum()
-fig, ax = plt.subplots()
-ax.plot(by_year.index, by_year.values, marker='o', color='red')
-ax.set_xlabel('Year')
-ax.set_ylabel('Fatalities')
-st.pyplot(fig)
+col1, col2 = st.columns(2)
 
-# Civilian deaths over time
-st.subheader('Civilian Deaths by Year')
-civ_by_year = filtered.groupby('year')['deaths_civilians'].sum()
-fig2, ax2 = plt.subplots()
-ax2.plot(civ_by_year.index, civ_by_year.values, marker='o', color='orange')
-ax2.set_xlabel('Year')
-ax2.set_ylabel('Civilian Deaths')
-st.pyplot(fig2)
+with col1:
+    st.subheader('Total Fatalities by Year')
+    by_year = filtered.groupby('year')['best'].sum()
+    fig, ax = plt.subplots()
+    ax.plot(by_year.index, by_year.values, marker='o', color='red')
+    ax.set_xlabel('Year')
+    ax.set_ylabel('Fatalities')
+    st.pyplot(fig)
+
+with col2:
+    st.subheader('Civilian Deaths by Year')
+    civ_by_year = filtered.groupby('year')['deaths_civilians'].sum()
+    fig2, ax2 = plt.subplots()
+    ax2.plot(civ_by_year.index, civ_by_year.values, marker='o', color='orange')
+    ax2.set_xlabel('Year')
+    ax2.set_ylabel('Civilian Deaths')
+    st.pyplot(fig2)
 
 # Map
 st.subheader('Conflict Map')
