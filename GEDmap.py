@@ -36,21 +36,13 @@ else:
     filtered = con.execute("SELECT * FROM 'GEDevent_slim.csv'").df()
 
 # Actor filter
-# Actor filter
-actor_input = st.text_input('Filter by actor (optional)', '')
+all_actors = ['None'] + sorted(set(
+    filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()
+))
+selected_actor = st.selectbox('Filter by actor (optional)', all_actors)
 
-if actor_input:
-    matches = sorted(set(
-        filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()
-    ))
-    matches = [a for a in matches if actor_input.lower() in a.lower()]
-    
-    if matches:
-        selected_actor = st.selectbox('Select actor', matches)
-        filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
-    else:
-        st.caption('No matching actors found.')
-
+if selected_actor != 'None':
+    filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
 # Violence type filter
 violence_map = {1: 'State-based conflict', 2: 'Non-state conflict', 3: 'One-sided violence'}
 descriptions = {
