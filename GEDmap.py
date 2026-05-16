@@ -53,7 +53,8 @@ descriptions = {
     'Non-state conflict': 'Armed conflict between non-governmental groups such as militias or clans.',
     'One-sided violence': 'Deliberate attacks by a government or armed group against unarmed civilians.'
 }
-selected_violence = st.multiselect('Type of violence', options=list(violence_map.values()), default=['State-based conflict'])for v in selected_violence:
+selected_violence = st.multiselect('Type of violence', options=list(violence_map.values()), default=['State-based conflict'])
+for v in selected_violence:
     st.caption(f'**{v}:** {descriptions[v]}')
 selected_codes = [k for k, v in violence_map.items() if v in selected_violence]
 filtered = filtered[filtered['type_of_violence'].isin(selected_codes)]
