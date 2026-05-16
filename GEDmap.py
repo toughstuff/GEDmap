@@ -36,13 +36,16 @@ else:
     filtered = con.execute("SELECT * FROM 'GEDevent_slim.csv'").df()
 
 # Actor filter
-all_actors = ['None'] + sorted(set(
-    filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()
-))
-selected_actor = st.selectbox('Filter by actor (optional)', all_actors)
-
-if selected_actor != 'None':
-    filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
+if country_name != 'All':
+    all_actors = ['None'] + sorted(set(
+        filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()
+    ))
+    selected_actor = st.selectbox('Filter by actor (optional)', all_actors)
+    if selected_actor != 'None':
+        filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
+else:
+    st.caption('Select a country to filter by actor.')
+    
 # Violence type filter
 violence_map = {1: 'State-based conflict', 2: 'Non-state conflict', 3: 'One-sided violence'}
 descriptions = {
