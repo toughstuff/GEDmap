@@ -97,9 +97,7 @@ else:
     for _, r in dot_data.iterrows():
         popup_html = f"""
         <b>Conflict:</b> {r['conflict_name']}<br>
-        <b>Dyad:</b> {r['dyad_name']}<br>
         <b>Location:</b> {r['where_description']}<br>
-        <b>Date:</b> {r['date_start']}<br>
         <b>Fatalities:</b> {r['best']}<br>
         <b>Civilian deaths:</b> {r['deaths_civilians']}<br>
         <b>Side A:</b> {r['side_a']}<br>
