@@ -36,8 +36,11 @@ else:
     filtered = con.execute("SELECT * FROM 'GEDevent_slim.csv'").df()
 
 # Actor filter
-all_actors = sorted(set(filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()))
-selected_actor = st.selectbox('Filter by actor (optional)', ['All'] + all_actors)
+actor_input = st.text_input('Filter by actor (optional)', '')
+
+if actor_input:
+    filtered = filtered[(filtered['side_a'].str.contains(actor_input, case=False, na=False)) | 
+                        (filtered['side_b'].str.contains(actor_input, case=False, na=False))]
 
 if selected_actor != 'All':
     filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
