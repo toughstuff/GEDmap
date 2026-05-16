@@ -42,9 +42,6 @@ if actor_input:
     filtered = filtered[(filtered['side_a'].str.contains(actor_input, case=False, na=False)) | 
                         (filtered['side_b'].str.contains(actor_input, case=False, na=False))]
 
-if selected_actor != 'All':
-    filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
-
 # Violence type filter
 violence_map = {1: 'State-based conflict', 2: 'Non-state conflict', 3: 'One-sided violence'}
 descriptions = {
