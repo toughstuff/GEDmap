@@ -25,7 +25,7 @@ if selected_region != 'All':
 else:
     country_options = ['All'] + sorted(con.execute("SELECT DISTINCT country FROM 'GEDevent_slim.csv' ORDER BY country").df()['country'].tolist())
 
-country_name = st.selectbox('Select a country', country_options)
+country_name = st.selectbox('Select a country', country_options, index=country_options.index('Afghanistan'))
 
 # Load filtered data
 if country_name != 'All':
@@ -40,8 +40,7 @@ if country_name != 'All':
     all_actors = ['None'] + sorted(set(
         filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()
     ))
-    selected_actor = st.selectbox('Filter by actor (optional)', all_actors)
-    if selected_actor != 'None':
+        selected_actor = st.selectbox('Filter by actor (optional)', all_actors, index=all_actors.index('Taliban') if 'Taliban' in all_actors else 0)    if selected_actor != 'None':
         filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
 else:
     st.caption('Select a country to filter by actor.')
@@ -53,8 +52,7 @@ descriptions = {
     'Non-state conflict': 'Armed conflict between non-governmental groups such as militias or clans.',
     'One-sided violence': 'Deliberate attacks by a government or armed group against unarmed civilians.'
 }
-selected_violence = st.multiselect('Type of violence', options=list(violence_map.values()), default=list(violence_map.values()))
-for v in selected_violence:
+selected_violence = st.multiselect('Type of violence', options=list(violence_map.values()), default=['State-based conflict'])for v in selected_violence:
     st.caption(f'**{v}:** {descriptions[v]}')
 selected_codes = [k for k, v in violence_map.items() if v in selected_violence]
 filtered = filtered[filtered['type_of_violence'].isin(selected_codes)]
@@ -87,7 +85,7 @@ selected_year = st.slider('Show data up to year', year_min, year_max, year_max)
 
 map_data = filtered[filtered['year'] <= selected_year].dropna(subset=['latitude', 'longitude'])
 
-map_mode = st.radio('Map mode', ['Heatmap', 'Dot map'])
+map_mode = st.radio('Map mode', ['Heatmap', 'Dot map'], index=1)
 
 center_lat = map_data['latitude'].mean()
 center_lon = map_data['longitude'].mean()
@@ -117,3 +115,5 @@ else:
         ).add_to(m)
 
 components.html(m._repr_html_(), height=500)
+if map_mode == 'Dot map':
+    st.caption('Click on dots for more details.')
