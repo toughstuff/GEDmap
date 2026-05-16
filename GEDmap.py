@@ -40,7 +40,7 @@ if country_name != 'All':
     all_actors = ['None'] + sorted(set(
         filtered['side_a'].dropna().tolist() + filtered['side_b'].dropna().tolist()
     ))
-        selected_actor = st.selectbox('Filter by actor (optional)', all_actors, index=all_actors.index('Taliban') if 'Taliban' in all_actors else 0)    if selected_actor != 'None':
+    selected_actor = st.selectbox('Filter by actor (optional)', all_actors, index=all_actors.index('Taliban') if 'Taliban' in all_actors else 0)    if selected_actor != 'None':
         filtered = filtered[(filtered['side_a'] == selected_actor) | (filtered['side_b'] == selected_actor)]
 else:
     st.caption('Select a country to filter by actor.')
